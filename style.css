@@ -65,6 +65,20 @@ button{
     background:yellow;
 }
 
+#button5 {
+    background: fuchsia;
+}
+#button5:active, #button5.lit{
+    background: purple;
+}
+
+#button6 {
+    background: coral;
+}
+#button6:active, #button6.lit{
+    background: chocolate;
+}
+
 /* images and videos max out at full width */
 img,
 video {
