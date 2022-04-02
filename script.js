@@ -1,26 +1,45 @@
+
 // global constants
-const clueHoldTime = 1000; //how long to hold each clue's light/sound
 const cluePauseTime = 333; //how long to pause in between clues
 const nextClueWaitTime = 1000; //how long to wait before starting playback of the clue sequence
 
 //Global Variables
-var pattern = [2, 3, 1, 3, 4, 1, 2, 4];
+var pattern = [];
 var progress = 0; 
 var gamePlaying = false;
 var tonePlaying = false;
 var volume = 0.5;  //must be between 0.0 and 1.0
 var guessCounter = 0;
+var clueHoldTime = 2400; //how long to hold each clue's light/sound
+var mistakes= 0;
 
+function generateSecretPattern(){
+  // generate secret pattern
+  pattern = [];
+  for (let i=0;i<8;i++){
+    var randomNumber= Math.floor(Math.random()*6)+1;
+    pattern.push(randomNumber);
+    
+  }
+}
 
 function startGame(){
     //initialize game variables
     progress = 0;
+    mistakes=0;
+    updateMistakes(mistakes);
     gamePlaying = true;
+    generateSecretPattern();
+    console.log(pattern)
   document.getElementById("startBtn").classList.add("hidden");
   document.getElementById("stopBtn").classList.remove("hidden");
   playClueSequence();
 }
-
+function updateMistakes(mistakes){
+  document.getElementById("mistakeCount").innerHTML= "Mistakes:"+ mistakes + "/3";
+  
+  
+}
 function stopGame(){
     //initialize game variables
     progress = 0;
@@ -31,10 +50,13 @@ function stopGame(){
 
 // Sound Synthesis Functions
 const freqMap = {
-  1: 250.6,
-  2: 358.6,
-  3: 300,
-  4: 466.2
+  1: 220.6,
+  2: 350,
+  3: 258.6,
+  4: 466.2,
+  5: 600,
+  6: 560
+  
 }
 function playTone(btn,len){ 
   o.frequency.value = freqMap[btn]
@@ -90,6 +112,7 @@ function playSingleClue(btn){
 
 function playClueSequence(){
   guessCounter = 0;
+  clueHoldTime-=200;
   let delay = nextClueWaitTime; //set delay to initial wait time
   for(let i=0;i<=progress;i++){ // for each clue that is revealed so far
     console.log("play single clue: " + pattern[i] + " in " + delay + "ms")
@@ -132,6 +155,11 @@ function guess(btn){
   }else{
     //Guess was incorrect
     //GAME OVER: LOSE!
-    loseGame();
+    mistakes+=1;
+    updateMistakes(mistakes);
+    if (mistakes==3){
+      loseGame();
+    }
+    
   }
 }    
